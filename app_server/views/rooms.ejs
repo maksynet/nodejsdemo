@@ -1,0 +1,226 @@
+<% var usernamex = null,
+   bio = null,
+   sex = null,
+   token = null,
+   myusername = null,
+   userimgPath = null;
+
+userinfo.forEach(function(inf) {
+ usernamex = inf.adsoyad,
+ myusername = inf.kadi,
+ token = inf.token,
+ bio = inf.bio,
+ sex = inf.cinsiyet,
+ userimgPath = inf.pathPhoto
+});
+
+%>
+<script type="text/javascript">
+$(document).ready(function() {
+	var pageTitleNotification = (function (window, document) {
+
+    var config = {
+        currentTitle: 'Naabun?',
+        interval: null
+    };
+
+    var on = function (notificationText, intervalSpeed) {
+        if (!config.interval) {
+            config.currentTitle = document.title;
+            config.interval = window.setInterval(function() {
+                document.title = (config.currentTitle === document.title)
+                    ? notificationText
+                    : config.currentTitle;
+            }, (intervalSpeed) ? intervalSpeed : 1000);
+        }
+    };
+
+    var off = function () {
+        window.clearInterval(config.interval);
+        config.interval = null;
+        document.title = config.currentTitle;
+    };
+
+    return {
+        on: on,
+        off: off
+    };
+
+})(window, document);
+  var socket = io(),
+      tr_token = "<%=token%>",
+      selectedRoom = null,
+      viewedID = null,
+      myusername = "<%=myusername%>";
+
+  setInterval(function(){
+    $('.timeStamp').each(function(){
+      var each = moment($(this).data('time'));
+      $(this).text(each.fromNow());
+    });
+  },60000);
+
+  scrollDown = function(){
+      $(".scrollDown").stop().animate({ scrollTop: $(".scrollDown ul").height() },300);
+  }
+  function letsChat(datastabil, stabilID) {
+    var messageHtml = '<li class="messageBox';
+        if( datastabil.kadi == myusername ){messageHtml+= ' right">';}else{messageHtml+= '">';}
+        messageHtml+='<div class="messageContent">';
+        messageHtml+='<p>'+datastabil.msj+'</p>';
+        messageHtml+='<span class="timeStamp" data-time="'+datastabil.time+'">'+moment().fromNow()+'</span>';
+        messageHtml+='</div>';
+        messageHtml+='</li>';
+        if($('.message ul#'+stabilID).length > 0){
+          $('.message ul#'+stabilID).append(messageHtml);
+          $('.otherMessage ul li.role_'+stabilID).addClass('newmessage');
+        }
+        if( $('#seens_'+stabilID).length < 1 ){
+          $('.seensArea').append('<span id="seens_'+stabilID+'" class="seen on"><i class="fa fa-eye"></i> görüldü</span>')
+        }
+        if( datastabil.kadi != myusername ){
+          pageTitleNotification.on(datastabil.kadi+" mesaj gönderdi", 700);
+        }
+        scrollDown();
+  }
+  socket.on('otherMessage', function(chatData) {
+    if( chatData.koth == myusername ){
+      if( $('.message ul.__role_'+chatData.kadi).length < 1 ){ // create New chat
+         selectedRoom = chatData.kadi;
+         $('.message').append('<ul class="__role_'+chatData.kadi+'" id="'+chatData.kadi+'"></ul>');
+           letsChat(chatData, chatData.ulrole);
+      }
+      if( $('.otherMessage ul li.role_'+chatData.kadi).length < 1 ){ // append bottom
+        $('.otherMessage ul').append('<li class="role_'+chatData.kadi+' newmessage" id="__roomV'+chatData.kadi+'"><a id="'+chatData.kadi+'" href="#'+chatData.kadi+'" class="selectRoom"><span>'+chatData.kadi+'</span>  <i class="fa fa-envelope-o"></i></a></li>');
+      }
+     }
+  });
+  socket.on('getChatInfo', function(data){
+    letsChat(data, data.ulrole);
+  });
+  socket.on('leaveRoom', function(leaveText){
+     $('.message ul#'+leaveText).append('<p class="disconnectRoom">'+leaveText+' odadan ayrıldı. Tekrar odaya giriş yaptığında mesajlarınızı görebilir.</p>');
+  });
+  function seen(thatid) {
+    socket.emit('setSeen', thatid);
+  }
+
+
+  $(document).on('click','.selectRoom', function() {
+    var buttonThis = $(this);
+    $('.otherMessage ul li').removeClass('newmessage active');
+    buttonThis.parent('li').addClass('active');
+    var activeID = buttonThis.attr('id');
+    selectedRoom = activeID;
+    viewedID = activeID;
+    $('.message ul').hide().filter('.message ul#'+activeID).show();
+    socket.emit('changeroom', tr_token);
+    $('.messagesendonenter').focus();
+    seen(viewedID);
+    pageTitleNotification.off();
+    return false;
+  });
+  $(window).focus(function() { pageTitleNotification.off(); });
+  $(document).on('keypress', '.messagesendonenter', function (e) {
+		var _mVal = $(this).val().trim();
+		if(e.which === 13){
+			if(_mVal == ''){ return false;}
+      var myData = { 'kadi':myusername,'ulrole':selectedRoom, 'msj':_mVal, 'token':tr_token, 'time': moment()}
+			socket.emit('chat', myData);
+			$('.messagesendonenter').val('');
+		}
+	});
+  $('.messagesendonenter').focus(function(){seen(viewedID);})
+  socket.on('youtubeMovieLets', function(getlinkData) {
+    $('#youtubeMovieFrame').html("<iframe width='100%' height='315' src='https://www.youtube.com/embed/"+getlinkData+"?rel=0&autoplay=1' frameborder='0' allowfullscreen></iframe>");
+  });
+  $('input[type=link]').keypress(function(e) {
+    if( e.which == 13 ){
+      var video_id = $('input[type=link]').val().trim().split('v=')[1];
+      socket.emit('youtubeMovieGets',video_id, selectedRoom);
+    }
+  })
+  socket.on('letSeen', function(comeSeendid, kothS) {
+    if( kothS == myusername ){
+      $('#seens_').hide();
+      $('#seens_'+comeSeendid).show();
+    }
+  })
+
+
+});
+</script>
+<div id="top">
+  <div class="container">
+    <div class="w50">
+      <h3 class="logs"></h3>
+    </div>
+    <div class="w50">
+      <div class="rightPull">
+        <div class="profileMini">
+          <a href="/profile">
+            <img style="background: url('/public/img/users/<%=userimgPath%>') no-repeat center;" class="circle bgPic" width="50" height="50" alt=""/>
+            <span><%=usernamex%></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<section class="w100 content">
+  <div class="container">
+
+    <div class="wrapFlex">
+
+      <div class="flex-col-2 leftWrap asideLeft leftWrapBox">
+        <div class="section">
+            <h5 id="userName"><%=usernamex%></h5>
+          <ul>
+            <li><a href="/profile">Profil</a></li>
+            <li><a href="/config">Ayarlar</a></li>
+            <li><a href="/rooms">Sohbet</a></li>
+            <li><a href="/logout">Çıkış Yap</a></li>
+          </ul>
+        </div>
+
+        <div class="section helpBlock">
+          <h5>Yardım</h5>
+          <ul></ul>
+        </div>
+      </div>
+      <div class="flex-col-6 leftWrap mainCenter">
+        <article class="wrapChatContent">
+
+          <div class="chatFormArea">
+            <div class="message scrollDown"></div>
+            <div class="seensArea"></div>
+            <div class="chattools">
+              <input type="text" id="messagesendonenter" role="messagesendonenter" class="formX messagesendonenter msgSendArea" autofocus="on" placeholder="Bir şeyler yaz..."/>
+            </div>
+            <div class="otherMessage">
+              <ul></ul>
+            </div>
+          </div>
+
+        </article>
+      </div>
+      <div class="flex-col-3 leftWrap asideRight">
+        <div class="panelWrap">
+          <h4 class="wrapTitle">Birlikte Dinle <span class="refresh"><a href="#" id="listenNow">Paylaş <i class="fa fa-youtube-play"></i></a></span></h4>
+          <input type="link" placeholder="https://www.youtube.com/watch?v=">
+          <div id="youtubeMovieFrame"></div>
+        </div>
+        <div class="panelWrap">
+          <h4 class="wrapTitle">Çevrimiçi <span class="refresh"><a href="#">Yenile <i class="fa fa-refresh"></i></a></span></h4>
+          <ul>
+            <% usersOnline.forEach(function(us) {  %>
+            <li><a href="/rooms/single/<%=us.kadi%>" target="_blank"><img style="background: url('/public/img/users/<%=us.pathPhoto%>') no-repeat center;" class="circle bgPic" width="50" height="50" alt=""/></a></li>
+            <%  }); %>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>

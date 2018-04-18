@@ -1,0 +1,232 @@
+<% var uskadi = null,
+   usernamex = null,
+   userimgPath = null;
+
+userinfo.forEach(function(inf) {
+  usernamex = inf.adsoyad,
+  uskadi = inf.kadi,
+  userimgPath = inf.pathPhoto
+});
+
+var usUsername =  null,
+    usUserpath = null,
+    usUserfullname = null;
+
+someuser.forEach(function(sus){
+  usUserfullname = sus.adsoyad,
+  usUserpath = sus.pathPhoto,
+  token = sus.token,
+  usUsername = sus.kadi
+});
+%>
+<script type="text/javascript">
+$(document).ready(function() {
+	var pageTitleNotification = (function (window, document) {
+
+    var config = {
+        currentTitle: 'Naabun?',
+        interval: null
+    };
+
+    var on = function (notificationText, intervalSpeed) {
+        if (!config.interval) {
+            config.currentTitle = document.title;
+            config.interval = window.setInterval(function() {
+                document.title = (config.currentTitle === document.title)
+                    ? notificationText
+                    : config.currentTitle;
+            }, (intervalSpeed) ? intervalSpeed : 1000);
+        }
+    };
+
+    var off = function () {
+        window.clearInterval(config.interval);
+        config.interval = null;
+        document.title = config.currentTitle;
+    };
+
+    return {
+        on: on,
+        off: off
+    };
+
+})(window, document);
+  var socket = io(),
+  viewedID = null;
+  var _kadi  = "<%=uskadi%>",
+      _token = "<%=token%>",
+      _koth  = "<%=usUsername%>",
+      _phot  = "<%=userimgPath%>";
+viewedID = _koth;
+scrollDown = function(){
+    $(".scrollDown").stop().animate({ scrollTop: $(".scrollDown ul").height() },300);
+}
+function seen(thatid, kothS = null) {
+  socket.emit('setSeen', thatid, kothS);
+}
+setInterval(function(){
+
+  $('.timeStamp').each(function(){
+    var each = moment($(this).data('time'));
+    $(this).text(each.fromNow());
+  });
+
+},60000);
+
+ // Send message.
+
+	$(document).on('keypress', '.messagesendonenter', function (e) {
+		var _mVal = $(this).val().trim();
+		if(e.which === 13){
+			if(_mVal == ''){ return false;}
+      var myData = { 'kadi':_kadi, 'koth':_koth, 'ulrole':_kadi, 'msj':_mVal, 'token':_token, 'time': moment()}
+			socket.emit('chat', myData);
+			$('.messagesendonenter').val('');
+		}
+	});
+  socket.on('getChatInfo', function(data){
+    var messageHtml = '<li class="messageBox';
+        if( data.kadi == _kadi ){messageHtml+= ' right">';}else{messageHtml+= '">';}
+        messageHtml+='<div class="messageContent">';
+        messageHtml+='<p>'+data.msj+'</p>';
+        messageHtml+='<span class="timeStamp" data-time="'+data.time+'">'+moment().fromNow()+'</span>';
+        messageHtml+='</div>';
+        messageHtml+='</li>';
+        if( data.ulrole == _kadi ){
+           $('.message ul').append(messageHtml);
+           if( data.kadi != _kadi ){
+             pageTitleNotification.on(data.kadi+" mesaj gönderdi", 700);
+           }
+        }
+
+      scrollDown();
+	});
+  $(window).focus(function() {
+       pageTitleNotification.off();
+  });
+  socket.on('leaveRoom', function(leaveText){
+    if( leaveText == _koth ){
+      $('.message ul').append('<p class="disconnectRoom">'+leaveText+' odadan ayrıldı. Tekrar odaya giriş yaptığında mesajlarınızı görebilir.</p>');
+    }
+
+  });
+  socket.on('youtubeMovieLets', function(getlinkData, wholink) {
+    if(wholink == _kadi){
+      $('#youtubeMovieFrame').html("<iframe width='100%' height='315' src='https://www.youtube.com/embed/"+getlinkData+"?rel=0&autoplay=1' frameborder='0' allowfullscreen></iframe>");
+    }
+  });
+
+  $('input[type=link]').keypress(function(e) {
+    if( e.which == 13 ){
+      var video_id = $('input[type=link]').val().trim().split('v=')[1];
+      socket.emit('youtubeMovieGets',video_id, _kadi);
+    }
+  })
+  $('.messagesendonenter').focus(function() {
+    seen(_kadi, viewedID);
+  })
+  socket.on('letSeen', function(comeSeendid) {
+    if( comeSeendid == _kadi ){
+      if( $('#seens_'+comeSeendid).length < 1 ){
+        $('.seensArea').html('<span id="seens_'+comeSeendid+'" class="seen"><i class="fa fa-eye"></i> görüldü</span>')
+      }else{
+        $('#seens_'+comeSeendid).show();
+      }
+    }
+  })
+
+});
+
+</script>
+<div id="top">
+  <div class="container">
+    <div class="w50">
+      <h3 class="logs"></h3>
+    </div>
+    <div class="w50">
+      <div class="rightPull">
+        <div class="profileMini">
+          <a href="/profile">
+            <img style="background: url('/public/img/users/<%=userimgPath%>') no-repeat center;" class="circle bgPic" width="50" height="50" alt=""/>
+            <span><%=usernamex%></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<section class="w100 content">
+  <div class="container">
+
+    <div class="wrapFlex">
+
+      <div class="flex-col-2 leftWrap asideLeft leftWrapBox">
+        <div class="section">
+            <h5 id="userName"><%=usernamex%></h5>
+          <ul>
+            <li><a href="/profile">Profil</a></li>
+            <li><a href="/config">Ayarlar</a></li>
+            <li><a href="/rooms">Sohbet</a></li>
+            <li><a href="/logout">Çıkış Yap</a></li>
+          </ul>
+        </div>
+
+        <div class="section helpBlock">
+          <h5>Yardım</h5>
+          <ul></ul>
+        </div>
+      </div>
+      <div class="flex-col-6 leftWrap mainCenter">
+        <article class="wrapChatContent">
+
+          <div class="chatFormArea">
+            <div class="userInfo">
+              <a href="/<%=usUsername%>">
+                <img style="background: url('/public/img/users/<%=usUserpath%>') no-repeat center;" class="bgPicChat" width="50" height="50" alt=""/>
+                <span class="uiName"><%=usUserfullname%></span>
+              </a>
+              <span>-</span>
+              <%if (followres > 0) { %>
+              <span class="uiFollow">
+                <a role="nonlink" aria-pressed="false" dataui="<%=usUsername%>" id="user" class="UFILikeLink followUser" tabindex="0" href="#">Takip Ediyorsun</a>
+              </span>
+              <% }else{ %>
+                <span class="uiFollow">
+                  <a role="nonlink" aria-pressed="false" dataui="<%=usUsername%>" id="user" class="UFILikeLink followUser" tabindex="0" href="#">Takip Et</a>
+                </span>
+              <% } %>
+            </div>
+
+            <div class="chatFormArea">
+              <div class="message scrollDown">
+                <ul class="active"></ul>
+              </div>
+              <div class="seensArea"></div>
+              <div class="chattools">
+                <input type="text" id="messagesendonenter" role="messagesendonenter" class="formX messagesendonenter msgSendArea" autofocus="on" placeholder="Bir şeyler yaz..."/>
+              </div>
+            </div>
+          </div>
+
+        </article>
+      </div>
+      <div class="flex-col-3 leftWrap asideRight">
+        <div class="panelWrap">
+          <h4 class="wrapTitle">Birlikte Dinle <span class="refresh"><a href="#" id="listenNow">Paylaş <i class="fa fa-youtube-play"></i></a></span></h4>
+          <input type="link" placeholder="https://www.youtube.com/watch?v=">
+          <div id="youtubeMovieFrame"></div>
+        </div>
+        <div class="panelWrap">
+          <h4 class="wrapTitle">Çevrimiçi <span class="refresh"><a href="#">Yenile <i class="fa fa-refresh"></i></a></span></h4>
+          <ul>
+            <% usersOnline.forEach(function(us) {  %>
+            <li><a href="/rooms/single/<%=us.kadi%>" target="_blank"><img style="background: url('/public/img/users/<%=us.pathPhoto%>') no-repeat center;" class="circle bgPic" width="50" height="50" alt=""/></a></li>
+            <%  }); %>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>

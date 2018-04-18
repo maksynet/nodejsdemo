@@ -1,0 +1,131 @@
+<%
+var usernamex = null,
+    nameuser = null,
+    userpass = null,
+    namesex = null,
+    usermail = null,
+    userimgPath = null,
+    userbio = null;
+
+userinfo.forEach(function(inf) {
+    nameuser = inf.kadi,
+    usernamex = inf.adsoyad,
+    userpass = inf.sifre,
+    namesex = inf.cinsiyet,
+    usermail = inf.email,
+    userimgPath = inf.pathPhoto
+    userbio = inf.bio;
+});
+%>
+<div id="top">
+  <div class="container">
+    <div class="w50">
+      <h3 class="logs"></h3>
+    </div>
+    <div class="w50">
+      <div class="rightPull">
+         <div class="profileMini">
+          <a href="/profile">
+            <img style="background:#000 url('/public/img/users/<%=userimgPath%>') no-repeat center;" class="circle bgPic" width="50" height="50" alt="<%=usernamex%>"/>
+            <span><%=usernamex%></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<section class="w100 content">
+  <div class="container">
+
+    <div class="wrapFlex">
+
+      <div class="flex-col-2 asideLeft leftWrapBox">
+        <div class="section">
+            <h5 id="userName"><%=usernamex%></h5>
+          <ul>
+            <li><a href="/profile">Profil</a></li>
+            <li><a href="/config">Ayarlar</a></li>
+            <li><a href="/rooms">Sohbet</a></li>
+            <li><a href="/logout">Çıkış Yap</a></li>
+          </ul>
+        </div>
+
+
+        <div class="section helpBlock">
+          <h5>Yardım</h5>
+          <ul></ul>
+        </div>
+      </div>
+      <div class="flex-col-9 mainCenter">
+        <article class="wrapChatContent">
+
+          <div class="userProfileInformation">
+            <span class="helpQ">PROFİL RESMİNİ GÜNCELLE </span>
+
+          <div class="formAreaForHelp">
+
+            <form action="/config/upload" id="profilePic" method="POST" enctype="multipart/form-data">
+             <div class="formGrx">
+               <label>Yeni Resim Seç </label>
+               <input type="file" name="userPhoto" class="form_hp" accept="image/*"/>
+             </div>
+             <div class="formGrx">
+               <button type="submit" name="infophotoup" value="infophotoup" class="nowSaveAccount">Yükle</button>
+             </div>
+           </form>
+         </div>
+
+             <div class="clearboxline"></div>
+
+             <span class="helpQ">PROFİL BİLGİLERİNİ GÜNCELLE </span>
+          <div class="formAreaForHelp">
+             <form action="/config" id="help" method="POST">
+              <div class="formGrx">
+                <label>Kullanıcı Adınız</label>
+                <input type="text" value="<%=nameuser%>" disabled="disabled" class="form_hp"/>
+                <small>Kullanıcı Adını Değiştiremezsiniz!</small>
+              </div>
+
+               <div class="formGrx">
+                 <label>Cinsiyetiniz</label>
+                 <input type="text" value="<%=namesex%>" disabled="disabled" class="form_hp"/>
+                 <small>Cinsiyeti Değiştiremezsiniz!</small>
+               </div>
+
+              <div class="formGrx">
+                <label>Adınız Soyadınız</label>
+                <input type="text" name="adsoyad" value="<%=usernamex%>" class="form_hp"/>
+              </div>
+
+              <div class="formGrx">
+                <label>E-mail Adresiniz </label>
+                <input type="email" name="email" value="<%=usermail%>" class="form_hp"/>
+              </div>
+
+              <div class="formGrx">
+                <label>Şifreniz</label>
+                <span class="showMyPass">Şifreyi Göster</span>
+                <input type="password" name="sifre" value="<%=userpass%>" class="form_hp"/>
+              </div>
+
+              <div class="formGrx">
+                <label>Kendinden Bahset</label>
+                <textarea rows="4" name="bio" class="form_hp"><%=userbio%></textarea>
+              </div>
+
+
+              <div class="formGrx">
+                <button type="submit" name="infoForm" value="infoForm" class="nowSaveAccount">Kaydet</button>
+              </div>
+
+
+             </form>
+          </div>
+
+           </div>
+        </article>
+      </div>
+    </div>
+
+  </div>
+</section>

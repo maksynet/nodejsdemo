@@ -1,0 +1,101 @@
+<% var usernamex = null,
+   bio = null,
+   sex = null,
+   nameuser = null,
+   userimgPath = null;
+
+var orjName = null, orjPhoto = null;
+
+myProfile.forEach(function(dif){
+  orjName = dif.orjName,
+  orjPhoto = dif.orjPhoto
+});
+
+xuinfo.forEach(function(inf) {
+  usernamex = inf.adsoyad,
+  bio = inf.bio,
+  nameuser = inf.kadi,
+  sex = inf.cinsiyet,
+  userimgPath = inf.pathPhoto
+});
+%>
+<div id="top">
+  <div class="container">
+    <div class="w50">
+      <h3 class="logs"></h3>
+    </div>
+    <div class="w50">
+      <div class="rightPull">
+         <div class="profileMini">
+          <a href="/profile">
+            <img style="background: url('/public/img/users/<%=orjPhoto%>') no-repeat center;" class="circle bgPic" width="50" height="50" alt=""/>
+            <span><%=orjName%></span>
+          </a>
+         </div>
+      </div>
+    </div>
+  </div>
+</div>
+<section class="w100 content">
+  <div class="container">
+
+    <div class="wrapFlex">
+
+      <div class="flex-col-2 leftWrap asideLeft leftWrapBox">
+        <div class="section">
+            <h5 id="userName"><%=orjName%></h5>
+          <ul>
+            <li><a href="/profile">Profil</a></li>
+            <li><a href="/config">Ayarlar</a></li>
+            <li><a href="/rooms">Sohbet</a></li>
+            <li><a href="/logout">Çıkış Yap</a></li>
+          </ul>
+        </div>
+
+        <div class="section helpBlock">
+          <h5>Yardım</h5>
+          <ul></ul>
+        </div>
+      </div>
+      <div class="flex-col-9 leftWrap mainCenter">
+        <article class="wrapChatContent">
+
+          <div class="userProfileInformation">
+
+            <a href="/public/img/users/<%=userimgPath%>" class="popupImage">
+              <img style="background: url('/public/img/users/<%=userimgPath%>') no-repeat center;" class="circle userPic bgPic" alt="<%=usernamex%>"/>
+            </a>
+            <span class="userNameX"><a href="/<%=nameuser%>"><%=usernamex%></a></span>
+            <span class="userAgeX"><%=sex%></span>
+            <span class="userDescp"><%=bio%></span>
+           </div>
+
+           <div class="altBlock">
+            <% if (followres > 0) { %>
+            <span class="userFollowX">
+              <a role="nonlink" aria-pressed="false" dataui="<%=nameuser%>" id="user" class="UFILikeLink followUser" tabindex="0" href="#">Takip Ediyorsun</a>
+            </span>
+            <% }else{ %>
+              <span class="userFollowX">
+                <a role="nonlink" aria-pressed="false" dataui="<%=nameuser%>" id="user" class="UFILikeLink followUser" tabindex="0" href="#">Takip Et</a>
+              </span>
+            <% } %>
+
+            <span class="userFollowX"><a href="/rooms/single/<%=nameuser%>">Mesaj Gönder</a></span>
+            <span class="userFollowX followers"><a href="#">246 Takipçi</a></span>
+            <span class="userFollowX follow"><a href="#">124 Takip</a></span>
+           </div>
+
+           <div class="alertinfo">
+              <p>Onu Takip Ederek Daha Kolay Ulaşabilirsin</p>
+              <a href="/rooms/single/<%=nameuser%>" class="bigSendMessage"><i class="fa fa-envelope-o"></i></a>
+
+           </div>
+
+
+        </article>
+      </div>
+    </div>
+
+  </div>
+</section>

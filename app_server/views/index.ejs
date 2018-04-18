@@ -1,0 +1,113 @@
+<div id="top">
+	<div class="container">
+		<div class="w50">
+			<h3 class="logs"></h3>
+		</div>
+		<div class="w50">
+			<div class="rightPull">
+				<div class="loginPanel">
+					<form action="/login" method="POST">
+						<div class="formInline">
+							<input type="text" class="formSp" autofocus="on" autocomplete="off" name="userName" required placeholder="Kullanıcı Adı" value="maksynet"/>
+						</div>
+						<div class="formInline">
+							<input type="password" class="formSp" name="userPass" required placeholder="Şifre" value="123123"/>
+						</div>
+						<div class="formInline">
+							<button type="submit" class="btnLogin">Giriş</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<section class="w100 content">
+	<div class="container">
+
+				<div class="wrapFlex">
+					<div class="flex-col-2 leftWrap asideLeft leftWrapBox">
+
+					   <div class="stepPageForOne homePad wrapFlex">
+
+						 <div class="flex-col-2 myBorderX">
+							<ul class="whatthislist">
+								<li class="spWrap_bl">
+									<span class="h h5 tleft"><i class="fa fa-comments-o"></i> Anlık sohbet et</span>
+								</li>
+								<li class="spWrap_bl">
+									<span class="h h5 tleft"><i class="fa fa-eercast"></i> Çevrimiçi takipçilerini gör</span>
+								</li>
+								<li class="spWrap_bl">
+									<span class="h h5 tleft"><i class="fa fa-pie-chart"></i> İlgi alanlarına göre insanlar</span>
+								</li>
+								<li class="spWrap_bl">
+									<span class="h h5 tleft"><i class="fa fa-user-secret"></i> İster anonim konuş ister kayıt ol</span>
+								</li>
+								<li class="spWrap_bl">
+									<span class="h h5 tleft"><i class="fa fa-music"></i> Sohbet ederken birlikte müzik dinle </span>
+								</li>
+								<li class="spWrap_bl">
+									<span class="h h5 tleft"><i class="fa fa-play"></i> Beraber vakit geçirmenin keyfini yaşa!</span>
+								</li>
+							</ul>
+						 </div>
+						 <div class="flex-col-2">
+						  <div class="formAreaForNewUser">
+								<span class="h h3 tright"><strong>Yeni Kayıt Oluştur</strong></span>
+								<form action="" id="newUserForm" method="POST">
+									<div class="formGr">
+										<input type="text" name="adsoyad" autocomplete="off" class="inpSp" placeholder="Adınız Soyadınız"/>
+									</div>
+									<div class="formGr">
+										<input type="text" name="kadi" autocomplete="off" class="inpSp" placeholder="Kullanıcı Adınız"/>
+									</div>
+									<div class="formGr">
+										<input type="email" name="email" autocomplete="off" class="inpSp" placeholder="E-mail Adresiniz"/>
+									</div>
+									<div class="formGr">
+										<select class="inpSp" name="cinsiyet">
+											<option>Cinsiyet</option>
+											<option value="Erkek">Erkek</option>
+											<option value="Kadın">Kadın</option>
+										</select>
+									</div>
+									<div class="formGr">
+										<input type="password" name="sifre" class="inpSp" placeholder="Şifre"/>
+									</div>
+									<div class="formGr">
+										<input type="password" name="sifretekrar" class="inpSp" placeholder="Şifre Tekrarı"/>
+									</div>
+									<div class="formGr">
+										<button type="submit" class="nowSaveAccount">Kayıt Ol</button>
+									</div>
+
+								</form>
+							</div>
+					    </div>
+					  </div>
+
+					  <div class="wrapFlex">
+						 <div class="flex-col-1 onlineUsers">
+							<div class="tcenter">
+								<span class="h h3">Online Üyeler</span>
+							</div>
+							<ul>
+								<% for(var i = 1; i<=7; i++ ){ %>
+								<li><a href="#">
+									<img src="public/img/res<%=i%>.jpg" alt=""/>
+									<div class="informationCard">
+										<p><b>MaksyNet</b> Science - Religion - Psychology</p>
+									</div>
+								</a></li>
+								<% } %>
+							</ul>
+						 </div>
+					  </div>
+
+
+					</div>
+				</div>
+
+			</div>
+		</section>
